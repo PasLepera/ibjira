@@ -1,7 +1,7 @@
 o
 2
-$JIRA_INSTALL
-$JIRA_HOME
+/var/atlassian/application-data/jira
+/opt/atlassian/jira
 
 y
 i

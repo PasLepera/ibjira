@@ -26,7 +26,8 @@ RUN deps=" \
 	cd /tmp && \
         wget --no-check-certificate https://product-downloads.atlassian.com/software/jira/downloads/$JIRA_INSTALLER && \
         chmod a+x $JIRA_INSTALLER && \
-        ./$JIRA_INSTALLER < ./installjira \ mkdir -p $JIRA_HOME && \
+        ./$JIRA_INSTALLER < ./installresp && \ 
+        mkdir -p $JIRA_HOME && \
 	\
 	chown -R $JIRA_USER:$JIRA_USER $JIRA_HOME && \
 	chown -R $JIRA_USER:$JIRA_USER $JIRA_INSTALL && \
