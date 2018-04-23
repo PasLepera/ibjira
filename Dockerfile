@@ -8,6 +8,7 @@ ENV JIRA_USER	  	jira
 ENV JIRA_INSTALLER	atlassian-jira-software-$JIRA_VERSION-x64.bin
 
 COPY ./installresp /tmp/installresp
+COPY ./entrypoint.sh /entrypoint.sh
 
 RUN deps=" \
 	libtcnative-1 xmlstarlet \
@@ -17,21 +18,18 @@ RUN deps=" \
 	openssl \
         " \
 	set -x && \
-        export DEBIAN_FRONTEND=noninteractive && \
+    export DEBIAN_FRONTEND=noninteractive && \
 	apt-get update && \
 	apt-get upgrade -y $deps --no-install-recommends && \
-	\
-	useradd --create-home --shell /bin/bash $JIRA_USER && \
-	\
 	cd /tmp && \
         wget --no-check-certificate https://product-downloads.atlassian.com/software/jira/downloads/$JIRA_INSTALLER && \
         chmod a+x $JIRA_INSTALLER && \
-        ./$JIRA_INSTALLER < ./installresp && \ 
+        ./$JIRA_INSTALLER < /tmp/installresp && \ 
         mkdir -p $JIRA_HOME && \
-	\
 	chown -R $JIRA_USER:$JIRA_USER $JIRA_HOME && \
 	chown -R $JIRA_USER:$JIRA_USER $JIRA_INSTALL && \
-	\
+        chown -R $JIRA_USER:$JIRA_USER /entrypoint.sh && \
+	chmod +x /entrypoint.sh && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -39,7 +37,6 @@ VOLUME ["${JIRA_HOME}"]
 
 EXPOSE 8080
 
-COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["/usr/local/atlassian/jira/bin/start-jira.sh", "-fg"]
+CMD ["/opt/atlassian/jira/bin/start-jira.sh", "-fg"]
